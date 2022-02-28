@@ -6,7 +6,7 @@ describe Oystercard do
   end
 
   it 'card can be topped up' do
-    expect(subject.top_up(10)).to eq 10
+    expect(subject.top_up(10)).to eq 20
   end
 
   it 'raises an error when balance exceeds £90 limit' do
@@ -14,12 +14,19 @@ describe Oystercard do
   end
 
   it 'raises an error when fare is charged and balance is below £1 limit' do
-    expect{ subject.fare(1)}.to raise_error "insufficient funds"
+    card = Oystercard.new(0)
+    expect{ card.touch_in}.to raise_error "insufficient funds"
   end
 
   it 'deducts money from the balance' do
     card = Oystercard.new(10)
-    expect{ card.fare(3) }.to change{ card.balance }.by -3
+    card.touch_in
+    expect{ card.touch_out }.to change{ card.balance }.by -Oystercard::DEFAULT_MIN
+  end
+
+  it 'touch_out deducts the minimum fare of £1' do
+    card = Oystercard.new(10)
+    expect{ card.touch_out }.to change{ card.balance }.by -Oystercard::DEFAULT_MIN
   end
 
   it 'enables card to be touched in' do

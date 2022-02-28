@@ -4,7 +4,7 @@ class Oystercard
   DEFAULT_MAX = 90
   DEFAULT_MIN = 1
 
-  def initialize(balance = 0)
+  def initialize(balance = 10)
     @balance = balance
     @travelling = false
   end
@@ -14,20 +14,23 @@ class Oystercard
     @balance += money
   end
   
-  def fare(cost)
-    raise "insufficient funds" if @balance - cost < DEFAULT_MIN
-    @balance -= cost
-  end
-
+  
   def touch_in
+    raise "insufficient funds" if @balance - DEFAULT_MIN < DEFAULT_MIN
     @travelling = true
   end
-
+  
   def touch_out
     @travelling = false
+    fare
   end
-
+  
   def in_journey?
     @travelling
+  end
+
+private
+  def fare
+    @balance -= DEFAULT_MIN
   end
 end
