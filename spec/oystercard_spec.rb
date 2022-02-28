@@ -13,8 +13,13 @@ describe Oystercard do
     expect{ subject.top_up(91)}.to raise_error "exceeds £90 balance limit"
   end
 
+  it 'raises an error when fare is charged and balance is below £1 limit' do
+    expect{ subject.fare(1)}.to raise_error "insufficient funds"
+  end
+
   it 'deducts money from the balance' do
-    expect{ subject.fare(3) }.to change{ subject.balance }.by -3
+    card = Oystercard.new(10)
+    expect{ card.fare(3) }.to change{ card.balance }.by -3
   end
 
   it 'enables card to be touched in' do
