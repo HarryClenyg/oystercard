@@ -1,10 +1,14 @@
 class Oystercard
   attr_accessor :balance
   attr_reader :station
+  attr_reader :journeys
+
   DEFAULT_MAX = 90
   DEFAULT_MIN = 1
 
   def initialize(balance = 10)
+    @journeys = {}
+    @journey_counter = 1
     @entry_station = nil
     @balance = balance
   end
@@ -15,12 +19,14 @@ class Oystercard
   end
   
   
-  def touch_in(station)
+  def touch_in(entry_station)
     raise "insufficient funds" if @balance - DEFAULT_MIN < DEFAULT_MIN
-    @entry_station = station
+    @entry_station = entry_station
   end
   
-  def touch_out
+  def touch_out(exit_station)
+    @journeys["journey_#{@journey_counter}"] = [@entry_station, exit_station]
+    @journey_counter += 1
     fare
     @entry_station = nil
   end
