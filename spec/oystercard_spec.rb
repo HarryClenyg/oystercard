@@ -79,4 +79,27 @@ describe Oystercard do
       expect(subject.journeys.count).to eq 3
     end
   end
-end
+
+  describe 'accessing name/zone of saved journeys' do
+
+    it 'returns the names of the stations' do
+      allow(station).to receive(:name).and_return('picadilly', 'moorgate')
+
+      subject.touch_in(@picadilly)
+      subject.touch_out(@moorgate)
+      expect(subject.journeys['journey_1'].map{ |station|
+      station.name }).to eq (['picadilly', 'moorgate'])
+      end
+    end
+
+    it 'returns the names of the zones' do
+      allow(station).to receive(:zone).and_return(1, 1)
+
+      subject.touch_in(@picadilly)
+      subject.touch_out(@moorgate)
+      expect(subject.journeys['journey_1'].map{ |station|
+      station.zone }).to eq ([1, 1])
+      end
+    end
+  
+
