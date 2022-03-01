@@ -3,7 +3,7 @@ require 'oystercard'
 
 describe Oystercard do
   let(:station) { double :station }
-  
+  let(:journey) { double :journey }
   it 'card holds money' do
     expect(subject.balance).to be_a Integer
   end
