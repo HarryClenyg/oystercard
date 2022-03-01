@@ -1,6 +1,8 @@
 require 'oystercard'
 
 describe Oystercard do
+  let(:station) { double :station }
+  
   it 'card holds money' do
     expect(subject.balance).to be_a Integer
   end
@@ -15,12 +17,12 @@ describe Oystercard do
 
   it 'raises an error when fare is charged and balance is below £1 limit' do
     card = Oystercard.new(0)
-    expect{ card.touch_in}.to raise_error "insufficient funds"
+    expect{ card.touch_in(station)}.to raise_error "insufficient funds"
   end
 
   it 'deducts money from the balance' do
     card = Oystercard.new(10)
-    card.touch_in
+    card.touch_in(station)
     expect{ card.touch_out }.to change{ card.balance }.by -Oystercard::DEFAULT_MIN
   end
 
@@ -30,15 +32,24 @@ describe Oystercard do
   end
 
   it 'enables card to be touched in' do
-    expect{ subject.touch_in}.to change {subject.travelling}.to true
+    expect{ subject.touch_in(station)}.to change {subject.in_journey?}.to true
   end
   
   it 'enables card to be touched out' do
-    subject.touch_in
-    expect{ subject.touch_out}.to change {subject.travelling}.to false
+    subject.touch_in(station)
+    expect{ subject.touch_out}.to change {subject.in_journey?}.to false
   end
 
   it 'travelling should equal false' do
     expect(subject).not_to be_in_journey
+  end
+
+  it 'card can store entry station on touch in' do
+    expect(subject.touch_in(station)).to eq station
+  end
+
+  it 'card can forgets entry station on touch out' do
+    subject.touch_in(station)
+    expect(subject.touch_out).to eq nil
   end
 end
